@@ -40,7 +40,7 @@ def generate_frames():
             current_detected.add(label_en)
 
             if label_en in animal_labels and label_en not in already_detected:
-                print(f"🔥 Detected a new animal!: {label_en}")
+                print(f"Detected a new animal!: {label_en}")
                 already_detected.add(label_en)
 
             # 四角形描画
