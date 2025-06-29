@@ -1,6 +1,11 @@
 from flask import Flask, Response, render_template
 import torch
 import cv2
+import requests
+from db import Position
+
+res = requests.get("https://ipinfo.io/json")
+data = res.json()
 
 app = Flask(__name__)
 
@@ -41,6 +46,17 @@ def generate_frames():
 
             if label_en in animal_labels and label_en not in already_detected:
                 print(f"Detected a new animal!: {label_en}")
+                loc = data['loc'].split(',')
+
+
+                latitude = float(loc[0])
+                longitude = float(loc[1])                  
+
+                Latitude  = latitude
+                Longitude = longitude
+                Position.create(Latitude=Latitude, Longitude=Longitude)
+
+
                 already_detected.add(label_en)
 
             # 四角形描画
@@ -87,6 +103,11 @@ def generate_frames():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/list')
+def list():
+    Positions = Position.select()
+    return render_template('list.html',Positions=Positions)
 
 @app.route('/video')
 def video():
